@@ -1,3 +1,18 @@
 spring:
   application:
     name: catalog
+    datasource:
+
+  url: ${DB_URL:jdbc:postgresql://localhost:5432/shopcloud?currentSchema=${DB_SCHEMA:catalog}}
+  username: ${DB_USERNAME:shopcloud}
+  password: ${DB_PASSWORD:shopcloud}
+  driver-class-name: org.postgresql.Driver
+  hikari:
+    schema: ${DB_SCHEMA:catalog}
+
+jpa:
+  properties:
+    hibernate:
+      default_schema: ${DB_SCHEMA:catalog}
+  hibernate:
+    ddl-auto: validate

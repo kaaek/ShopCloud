@@ -40,8 +40,8 @@ public class ProductDto {
     @DecimalMin("0.0")
     private BigDecimal productPrice;
 
-    @NonNull
-    private int productEntity;
+    @NotNull
+    private int productQuantity;
 
     @NotBlank
     @Pattern(

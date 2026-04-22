@@ -3,6 +3,7 @@ import com.shopcloud.catalog.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
+import lombok.NonNull;
 
 @Entity
 @Table(name = "products")
@@ -42,7 +43,6 @@ public class Product {
     private BigDecimal productPrice; // double cannot be null, @NonNull is redundant so it is omitted.
 
     @Column(nullable=false, unique=false)
-    @NonNull
     private int productQuantity;
 
     @Column(nullable = false, length = 1024)

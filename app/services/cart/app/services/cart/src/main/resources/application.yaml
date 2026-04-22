@@ -1,0 +1,31 @@
+server:
+  port: ${SERVER_PORT:8082}
+
+spring:
+  application:
+    name: cart
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: ${REDIS_TIMEOUT:2s}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:false}
+
+cart:
+  ttl-days: ${CART_TTL_DAYS:30}
+  cookie:
+    name: ${CART_COOKIE_NAME:SHOPCLOUD_CART_SESSION}
+    secure: ${CART_COOKIE_SECURE:false}
+    max-age-days: ${CART_COOKIE_MAX_AGE_DAYS:30}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true

@@ -1,3 +1,8 @@
 spring:
   application:
     name: auth
+
+jwt:
+  secret: VGhpc0lzQVNob3BDbG91ZFNlY3JldEtleUZvckpXVEhTMjU2 # TO-DO: change & move to AWS secrets manager. This is a place holder.
+  access-token-expiration-minutes: 15
+  refresh-token-expiration-days: 7

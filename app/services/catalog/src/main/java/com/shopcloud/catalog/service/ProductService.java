@@ -61,6 +61,7 @@ public class ProductService {
         existing.setProductCategory(dto.getProductCategory());
         existing.setProductRating(dto.getProductRating());
         existing.setProductPrice(dto.getProductPrice());
+        existing.setProductQuantity(dto.getProductQuantity());
         existing.setProductImageUrl(dto.getProductImageUrl());
 
         Product updated = productRepository.save(existing);
@@ -84,6 +85,7 @@ public class ProductService {
                 .productCategory(product.getProductCategory())
                 .productRating(product.getProductRating())
                 .productPrice(product.getProductPrice())
+                .productQuantity(product.getProductQuantity())
                 .productImageUrl(product.getProductImageUrl())
                 .build();
     }
@@ -97,6 +99,7 @@ public class ProductService {
                 .productCategory(dto.getProductCategory())
                 .productRating(dto.getProductRating())
                 .productPrice(dto.getProductPrice())
+                .productQuantity(dto.getProductQuantity())
                 .productImageUrl(dto.getProductImageUrl())
                 .build();
     }

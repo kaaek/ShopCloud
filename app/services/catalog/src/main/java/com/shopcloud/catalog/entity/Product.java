@@ -41,6 +41,10 @@ public class Product {
     @Column(nullable=false, unique = false)
     private BigDecimal productPrice; // double cannot be null, @NonNull is redundant so it is omitted.
 
+    @Column(nullable=false, unique=false)
+    @NonNull
+    private int productQuantity;
+
     @Column(nullable = false, length = 1024)
     @NonNull
     private String productImageUrl;

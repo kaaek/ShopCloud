@@ -1,18 +1,20 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: catalog
-    datasource:
-
-  url: ${DB_URL:jdbc:postgresql://localhost:5432/shopcloud?currentSchema=${DB_SCHEMA:catalog}}
-  username: ${DB_USERNAME:shopcloud}
-  password: ${DB_PASSWORD:shopcloud}
-  driver-class-name: org.postgresql.Driver
-  hikari:
-    schema: ${DB_SCHEMA:catalog}
-
-jpa:
-  properties:
+  datasource:
+    # Shared Postgres service/container name in docker-compose.
+    url: ${DB_URL:jdbc:postgresql://${DB_HOST:shopcloud-postgres}:${DB_PORT:5432}/${DB_NAME:shopcloud}}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: ${DB_SCHEMA:shopcloud}
+  jpa:
+    properties:
+      hibernate:
+        default_schema: ${DB_SCHEMA:shopcloud}
     hibernate:
-      default_schema: ${DB_SCHEMA:catalog}
-  hibernate:
-    ddl-auto: validate
+      ddl-auto: ${DDL_AUTO:validate}

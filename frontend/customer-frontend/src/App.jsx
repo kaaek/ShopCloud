@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import {
   ArrowRight,
   Boxes,
@@ -21,6 +22,7 @@ import {
   checkoutApi,
   clearSession,
   getSavedUser,
+  getLoginUrl,
   productApi,
   saveSession
 } from './api.js';
@@ -130,31 +132,13 @@ function App() {
 
   async function submitAuth(event) {
     event.preventDefault();
-    const payload = {
-      email: authForm.email,
-      password: authForm.password,
-      ...(authMode === 'register' ? { fullName: authForm.fullName } : {})
-    };
-
-    const result = await run(async () => {
-      const response = authMode === 'register'
-        ? await authApi.register(payload)
-        : await authApi.login(payload);
-      saveSession(response);
-      setUser({ id: response.userId, email: response.email, role: response.role });
-      setAuthForm({ fullName: '', email: '', password: '' });
-      setActivePanel('shop');
-      return response;
-    }, authMode === 'register' ? 'Account created.' : 'Logged in successfully.');
-
-    return result;
+    // With Cognito, we don't need to handle login/register here
+    // Instead, redirect to Cognito's hosted UI
+    authApi.login();
   }
 
   function logout() {
-    clearSession();
-    setUser(null);
-    setActivePanel('shop');
-    setNotice('Logged out.');
+    authApi.logout();
   }
 
   async function addToCart(product) {
@@ -405,33 +389,14 @@ function App() {
                   <UserRound size={34} />
                   <div>
                     <h4>{user.email}</h4>
-                    <p>{user.role}</p>
+                    <p>{user.name || 'Customer'}</p>
                   </div>
                   <button className="secondary-button" onClick={logout}>Logout</button>
                 </div>
               ) : (
-                <form className="stack-form" onSubmit={submitAuth}>
-                  {authMode === 'register' && (
-                    <label>
-                      Full name
-                      <input value={authForm.fullName} onChange={(e) => setAuthForm({ ...authForm, fullName: e.target.value })} required />
-                    </label>
-                  )}
-                  <label>
-                    Email
-                    <input type="email" value={authForm.email} onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })} required />
-                  </label>
-                  <label>
-                    Password
-                    <input type="password" value={authForm.password} onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })} required minLength={4} />
-                  </label>
-                  <button className="primary-button full" type="submit" disabled={loading}>
-                    {authMode === 'login' ? 'Login' : 'Create account'}
-                  </button>
-                  <button className="link-button" type="button" onClick={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}>
-                    {authMode === 'login' ? 'Need an account? Register' : 'Already have an account? Login'}
-                  </button>
-                </form>
+                <button className="primary-button full" onClick={submitAuth}>
+                  Login with Cognito
+                </button>
               )}
             </div>
 

@@ -174,3 +174,32 @@ data "aws_ami" "amazon-linux-2023" {
     type = list(string)
     default = []
   }
+
+  variable "environment" {
+    description = "Environment name (dev, staging, prod)"
+    type = string
+    default = "dev"
+  }
+
+  variable "enable_deletion_protection" {
+    description = "Enable deletion protection for critical resources"
+    type = bool
+    default = false
+  }
+
+  variable "ses_sender_email" {
+    description = "SES verified sender email address for invoice notifications"
+    type = string
+  }
+
+  variable "enable_cross_region_replica" {
+    description = "Enable cross-region read replica for RDS"
+    type = bool
+    default = true
+  }
+
+  variable "alb_certificate_arn" {
+    description = "ACM certificate ARN for the public ALB (customer frontend)"
+    type = string
+    default = ""
+  }

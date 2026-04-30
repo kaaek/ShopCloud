@@ -1,0 +1,13 @@
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/CatalogServiceApplication.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/exception/GlobalExceptionHandler.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/product/InternalProductController.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/product/Product.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/product/ProductRepository.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/product/ProductRequest.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/product/ProductService.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/product/PublicProductController.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/product/StockChangeRequest.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/security/InternalTokenFilter.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/security/JwtAuthFilter.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/security/JwtService.java
+/home/ubuntu/Desktop/ShopCloud/backend/catalog-service/src/main/java/com/shopcloud/catalog/security/SecurityConfig.java

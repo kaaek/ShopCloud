@@ -1,0 +1,16 @@
+com/shopcloud/admin/client/CatalogAdminClient$1.class
+com/shopcloud/admin/AdminServiceApplication.class
+com/shopcloud/admin/client/CheckoutAdminClient.class
+com/shopcloud/admin/config/RestTemplateConfig.class
+com/shopcloud/admin/security/JwtAuthFilter.class
+com/shopcloud/admin/AdminProductController.class
+com/shopcloud/admin/AdminOrderController.class
+com/shopcloud/admin/dto/OrderDto.class
+com/shopcloud/admin/client/CheckoutAdminClient$1.class
+com/shopcloud/admin/exception/GlobalExceptionHandler.class
+com/shopcloud/admin/dto/ProductDto.class
+com/shopcloud/admin/security/SecurityConfig.class
+com/shopcloud/admin/security/JwtService.class
+com/shopcloud/admin/dto/OrderLineDto.class
+com/shopcloud/admin/dto/ProductRequest.class
+com/shopcloud/admin/client/CatalogAdminClient.class

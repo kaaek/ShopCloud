@@ -1,0 +1,13 @@
+com/shopcloud/auth/dto/RegisterRequest.class
+com/shopcloud/auth/security/JwtAuthFilter.class
+com/shopcloud/auth/AuthController.class
+com/shopcloud/auth/security/JwtService.class
+com/shopcloud/auth/exception/GlobalExceptionHandler.class
+com/shopcloud/auth/user/UserRepository.class
+com/shopcloud/auth/dto/LoginRequest.class
+com/shopcloud/auth/user/AppUser.class
+com/shopcloud/auth/security/SecurityConfig.class
+com/shopcloud/auth/dto/AuthResponse.class
+com/shopcloud/auth/dto/UserMeResponse.class
+com/shopcloud/auth/user/Role.class
+com/shopcloud/auth/AuthServiceApplication.class

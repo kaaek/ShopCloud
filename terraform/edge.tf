@@ -21,7 +21,8 @@ resource "aws_route53_zone" "shopcloud" {
   name = local.root_domain_name
 
   tags = {
-    Name = "ShopCloud-Hosted-Zone"
+    Name        = "ShopCloud-Hosted-Zone"
+    Environment = var.environment
   }
 }
 
@@ -170,7 +171,7 @@ resource "aws_cloudfront_distribution" "frontend" {
   }
 
   default_cache_behavior {
-    target_origin_id         = "shopcloud-${each.key}-origin"
+    target_origin_id         = "shopcloud-customer-origin"
     viewer_protocol_policy   = "redirect-to-https"
     allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods           = ["GET", "HEAD", "OPTIONS"]
@@ -240,26 +241,47 @@ resource "aws_route53_record" "customer_alias_aaaa" {
   }
 }
 
-resource "aws_route53_record" "admin_alias_a" {
-  zone_id = aws_route53_zone.shopcloud.zone_id
-  name    = local.frontend_sites.admin.domain_name
-  type    = "A"
 
-  alias {
-    name                   = aws_cloudfront_distribution.frontend["admin"].domain_name
-    zone_id                = aws_cloudfront_distribution.frontend["admin"].hosted_zone_id
-    evaluate_target_health = false
+resource "aws_acm_certificate" "cloudfront" {
+  provider = aws.us_east_1
+
+  domain_name = var.root_domain_name
+
+  subject_alternative_names = [
+    "${var.customer_record_name}.${var.root_domain_name}"
+  ]
+
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name = "shopcloud-cloudfront-cert"
   }
 }
 
-resource "aws_route53_record" "admin_alias_aaaa" {
-  zone_id = aws_route53_zone.shopcloud.zone_id
-  name    = local.frontend_sites.admin.domain_name
-  type    = "AAAA"
-
-  alias {
-    name                   = aws_cloudfront_distribution.frontend["admin"].domain_name
-    zone_id                = aws_cloudfront_distribution.frontend["admin"].hosted_zone_id
-    evaluate_target_health = false
+resource "aws_route53_record" "cloudfront_cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cloudfront.domain_validation_options :
+    dvo.domain_name => {
+      name  = dvo.resource_record_name
+      type  = dvo.resource_record_type
+      value = dvo.resource_record_value
+    }
   }
+
+  zone_id = aws_route53_zone.shopcloud.zone_id
+  name    = each.value.name
+  type    = each.value.type
+  ttl     = 60
+  records = [each.value.value]
+}
+
+resource "aws_acm_certificate_validation" "cloudfront" {
+  provider = aws.us_east_1
+
+  certificate_arn         = aws_acm_certificate.cloudfront.arn
+  validation_record_fqdns = [for record in aws_route53_record.cloudfront_cert_validation : record.fqdn]
 }

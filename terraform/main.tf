@@ -1,17 +1,32 @@
-# ————————— VPC ————————— #
 terraform {
-    required_providers {
-        aws = {
-            source = "hashicorp/aws"
-            version = "~> 5.0"
-        }
+  required_version = ">= 1.5.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
-}
-provider "aws" {
-    region = var.aws_region
+
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.4"
+    }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
+  }
 }
 
 provider "aws" {
-    alias  = "us_east_1"
-    region = "us-east-1"
+  region = var.aws_region
 }
+
+# CloudFront WAF must be created in us-east-1.
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+}
+
+data "aws_caller_identity" "current" {}

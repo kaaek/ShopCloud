@@ -5,15 +5,15 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = "1.29"
 
-  vpc_id     = aws_vpc.main.id
+  vpc_id = aws_vpc.main.id
   subnet_ids = [
     aws_subnet.private_1.id,
-    aws_subnet.private_2.id,
+    aws_subnet.private_2.id
   ]
 
   cluster_endpoint_public_access       = true
-  cluster_endpoint_public_access_cidrs  = [var.vpn_cidr]
-  cluster_endpoint_private_access       = true
+  cluster_endpoint_public_access_cidrs = var.eks_api_allowed_cidrs
+  cluster_endpoint_private_access      = true
 
   enable_irsa = true
 
@@ -51,7 +51,7 @@ module "eks" {
     }
 
     egress_all = {
-      description = "Allow EKS worker nodes to reach required AWS and application endpoints"
+      description = "Allow EKS worker nodes to reach AWS services through NAT/VPC endpoints"
       protocol    = "-1"
       from_port   = 0
       to_port     = 0
@@ -80,8 +80,9 @@ module "eks" {
         workload = "shopcloud"
       }
 
-      tags = {
-        Name = "ShopCloud-EKS-Managed-Node-Group"
+      iam_role_additional_policies = {
+        Name        = "ShopCloud-EKS-Managed-Node-Group"
+        Environment = var.environment
       }
     }
   }

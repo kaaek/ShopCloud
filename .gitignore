@@ -24,3 +24,13 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# CI/CD generated frontend build env files
+frontend/*/.env.production
+
+# Terraform local state and plans should not be committed
+terraform/.terraform/
+terraform/*.tfstate
+terraform/.tfstate.
+terraform/tfplan
+terraform/*.tfplan

@@ -90,27 +90,6 @@ data "aws_ami" "amazon-linux-2023" {
 }
 
   # —————— Edge / Identity / Access —————— #
-  variable "root_domain_name" {
-    description = "Public Route 53 zone name used for the ShopCloud frontends"
-    type = string
-  }
-
-  variable "customer_record_name" {
-    description = "Relative Route 53 name for the customer frontend"
-    type = string
-    default = "www"
-  }
-
-  variable "admin_record_name" {
-    description = "Relative Route 53 name for the admin frontend"
-    type = string
-    default = "admin"
-  }
-
-  variable "cloudfront_certificate_arn" {
-    description = "ACM certificate ARN in us-east-1 for the CloudFront aliases"
-    type = string
-  }
 
   variable "customer_ingress_domain_name" {
     description = "Public DNS name of the customer ingress controller or ALB"
@@ -209,3 +188,15 @@ data "aws_ami" "amazon-linux-2023" {
     type = string
     default = ""
   }
+
+variable "enable_public_edge" {
+  description = "Enable public edge (CloudFront + WAF) for internet-facing traffic"
+  type        = bool
+  default     = true  # or false, depending on your setup
+}
+
+variable "enable_vpn" {
+  description = "Enable VPN endpoint"
+  type        = bool
+  default     = false  # or true, depending on your setup
+}

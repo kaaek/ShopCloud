@@ -1,5 +1,9 @@
+locals {
+  vpn_enabled = var.enable_vpn && var.vpn_server_certificate_arn != "" && var.vpn_root_certificate_chain_arn != ""
+}
+
 resource "aws_security_group" "vpn" {
-  count = var.enable_vpn ? 1 : 0
+  count = local.vpn_enabled ? 1 : 0
 
   name        = "shopcloud-vpn-sg"
   description = "Security group for the AWS Client VPN endpoint"
@@ -11,7 +15,7 @@ resource "aws_security_group" "vpn" {
 }
 
 resource "aws_security_group_rule" "vpn_ingress_from_clients" {
-  count = var.enable_vpn ? 1 : 0
+  count = local.vpn_enabled ? 1 : 0
 
   type              = "ingress"
   security_group_id = aws_security_group.vpn[0].id
@@ -23,7 +27,7 @@ resource "aws_security_group_rule" "vpn_ingress_from_clients" {
 }
 
 resource "aws_security_group_rule" "vpn_egress_all" {
-  count = var.enable_vpn ? 1 : 0
+  count = local.vpn_enabled ? 1 : 0
 
   type              = "egress"
   security_group_id = aws_security_group.vpn[0].id
@@ -35,7 +39,7 @@ resource "aws_security_group_rule" "vpn_egress_all" {
 }
 
 resource "aws_ec2_client_vpn_endpoint" "shopcloud" {
-  count = var.enable_vpn ? 1 : 0
+  count = local.vpn_enabled ? 1 : 0
 
   description            = "ShopCloud admin VPN"
   server_certificate_arn = var.vpn_server_certificate_arn
@@ -62,21 +66,21 @@ resource "aws_ec2_client_vpn_endpoint" "shopcloud" {
 }
 
 resource "aws_ec2_client_vpn_network_association" "private_1" {
-  count = var.enable_vpn ? 1 : 0
+  count = local.vpn_enabled ? 1 : 0
 
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.shopcloud[0].id
   subnet_id              = aws_subnet.private_1.id
 }
 
 resource "aws_ec2_client_vpn_network_association" "private_2" {
-  count = var.enable_vpn ? 1 : 0
+  count = local.vpn_enabled ? 1 : 0
 
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.shopcloud[0].id
   subnet_id              = aws_subnet.private_2.id
 }
 
 resource "aws_ec2_client_vpn_authorization_rule" "vpc" {
-  count = var.enable_vpn ? 1 : 0
+  count = local.vpn_enabled ? 1 : 0
 
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.shopcloud[0].id
   target_network_cidr    = var.vpc_cidr
@@ -84,14 +88,14 @@ resource "aws_ec2_client_vpn_authorization_rule" "vpc" {
 }
 
 resource "aws_ec2_client_vpn_route" "vpc" {
-  for_each = var.enable_vpn ? {
-    private_1 = aws_ec2_client_vpn_network_association.private_1
-    private_2 = aws_ec2_client_vpn_network_association.private_2
+  for_each = local.vpn_enabled ? {
+    private_1 = aws_subnet.private_1.id
+    private_2 = aws_subnet.private_2.id
   } : {}
 
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.shopcloud[0].id
   destination_cidr_block = var.vpc_cidr
-  target_vpc_subnet_id   = each.value.subnet_id
+  target_vpc_subnet_id   = each.value
   description            = "Route VPN traffic to the ShopCloud VPC"
 
   depends_on = [aws_ec2_client_vpn_authorization_rule.vpc]

@@ -13,8 +13,8 @@ subnet_6_cidr = "10.0.80.0/20"
 
 cognito_domain_prefix = "shopcloud-karim-503q-dev"
 
-enable_public_edge = false
-enable_vpn         = false
+enable_public_edge = true
+enable_vpn         = true
 
 cognito_customer_callback_urls = [
   "http://localhost:3000/callback"
@@ -36,11 +36,9 @@ ses_sender_email = "your-email@example.com"
 
 vpn_cidr = "10.100.0.0/22"
 
-root_domain_name = "www.shopcloud.com"
+customer_ingress_domain_name = "customer-public-alb.us-east-1.elb.amazonaws.com"
 
-customer_ingress_domain_name = "placeholder.example.com"
-
-cloudfront_certificate_arn = ""
+admin_ingress_domain_name = "admin-internal-alb.us-east-1.elb.amazonaws.com"
 
 vpn_root_certificate_chain_arn = ""
 

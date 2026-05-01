@@ -43,25 +43,3 @@ resource "aws_db_instance" "postgres_primary" {
     Environment = var.environment
   }
 }
-
-# ————————— Cross-Region Read Replica ————————— #
-# Creates a read replica in us-west-2 for disaster recovery and regional read optimization
-resource "aws_db_instance" "postgres_replica" {
-  count      = var.enable_cross_region_replica ? 1 : 0
-  identifier = "shopcloud-postgres-replica-${var.environment}"
-
-  replicate_source_db = aws_db_instance.postgres_primary.identifier
-  instance_class      = "db.t4g.micro"
-
-  publicly_accessible        = false
-  auto_minor_version_upgrade = true
-
-  skip_final_snapshot = true
-  deletion_protection = var.enable_deletion_protection
-
-  tags = {
-    Name        = "shopcloud-postgres-replica"
-    Environment = var.environment
-    Role        = "read-replica"
-  }
-}

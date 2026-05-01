@@ -1,17 +1,11 @@
-# ————————— Route 53 & DNS ————————— #
-output "route53_zone_id" {
-  description = "Hosted zone ID for the ShopCloud public domain"
-  value       = var.enable_public_edge ? aws_route53_zone.shopcloud[0].zone_id : null
-}
-
 output "customer_frontend_url" {
   description = "Primary URL for the customer storefront"
-  value       = var.enable_public_edge ? "https://${local.root_domain_name}" : "http://${aws_lb.customer_public.dns_name}"
+  value       = var.enable_public_edge ? "https://${aws_cloudfront_distribution.frontend["customer"].domain_name}" : "http://${aws_lb.customer_public.dns_name}"
 }
 
 output "admin_frontend_url" {
-  description = "URL for the admin dashboard"
-  value       = var.enable_public_edge ? "https://${local.frontend_sites.admin.domain_name}" : "http://${aws_lb.admin_internal.dns_name}"
+  description = "URL for the admin dashboard (VPN-private when VPN is enabled)"
+  value       = var.enable_vpn ? "http://${aws_lb.admin_internal.dns_name}" : (var.enable_public_edge ? "https://${aws_cloudfront_distribution.frontend["admin"].domain_name}" : "http://${aws_lb.customer_public.dns_name}")
 }
 
 # ————————— CloudFront & WAF ————————— #
@@ -24,7 +18,7 @@ output "cloudfront_domains" {
 
 output "waf_web_acl_arn" {
   description = "CloudFront WAF web ACL ARN"
-  value       = var.enable_public_edge ? aws_wafv2_web_acl.cloudfront[0].arn : null
+  value       = var.enable_public_edge ? aws_wafv2_web_acl.cloudfront.arn : null
 }
 
 # ————————— Load Balancers ————————— #
@@ -82,7 +76,7 @@ output "admin_cognito_hosted_ui_domain" {
 # ————————— VPN ————————— #
 output "vpn_endpoint_id" {
   description = "AWS Client VPN endpoint ID for private admin access"
-  value       = var.enable_vpn ? aws_ec2_client_vpn_endpoint.shopcloud[0].id : null
+  value       = local.vpn_enabled ? aws_ec2_client_vpn_endpoint.shopcloud[0].id : null
 }
 
 # ————————— EKS ————————— #
@@ -111,11 +105,6 @@ output "postgres_secret_arn" {
   description = "Secrets Manager ARN for the RDS managed master secret"
   value       = aws_db_instance.postgres_primary.master_user_secret[0].secret_arn
   sensitive   = true
-}
-
-output "postgres_replica_endpoint" {
-  description = "RDS PostgreSQL cross-region read replica endpoint"
-  value       = var.enable_cross_region_replica ? aws_db_instance.postgres_replica[0].address : null
 }
 
 # ————————— Cache ————————— #

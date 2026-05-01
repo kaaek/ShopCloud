@@ -1,0 +1,624 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shopcloud-runtime-config
+  labels:
+    app.kubernetes.io/part-of: shopcloud
+data:
+  AWS_REGION: "__AWS_REGION__"
+  CATALOG_SERVICE_URL: "http://catalog-service:8081"
+  CART_SERVICE_URL: "http://cart-service:8082"
+  CHECKOUT_SERVICE_URL: "http://checkout-service:8083"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shopcloud-nginx-configs
+  labels:
+    app.kubernetes.io/part-of: shopcloud
+data:
+  customer-frontend.conf: |
+    server {
+      listen 80;
+      server_name _;
+
+      root /usr/share/nginx/html;
+      index index.html;
+
+      location / {
+        try_files $uri $uri/ /index.html;
+      }
+
+      location /api/auth {
+        proxy_pass http://auth-service:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+
+      location /api/products {
+        proxy_pass http://catalog-service:8081;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization "";
+      }
+
+      location /api/cart {
+        proxy_pass http://cart-service:8082;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+
+      location /api/checkout {
+        proxy_pass http://checkout-service:8083;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+
+      location /api/orders {
+        proxy_pass http://checkout-service:8083;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+    }
+  admin-frontend.conf: |
+    server {
+      listen 80;
+      server_name _;
+
+      root /usr/share/nginx/html;
+      index index.html;
+
+      location / {
+        try_files $uri $uri/ /index.html;
+      }
+
+      location /api/auth/ {
+        proxy_pass http://auth-service:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+
+      location /api/admin/ {
+        proxy_pass http://admin-service:8084;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+    }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: auth-service-sa
+  labels:
+    app.kubernetes.io/part-of: shopcloud
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: catalog-service-sa
+  labels:
+    app.kubernetes.io/part-of: shopcloud
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cart-service-sa
+  labels:
+    app.kubernetes.io/part-of: shopcloud
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: checkout-service-sa
+  labels:
+    app.kubernetes.io/part-of: shopcloud
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-service-sa
+  labels:
+    app.kubernetes.io/part-of: shopcloud
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  labels:
+    app: auth-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+        app.kubernetes.io/part-of: shopcloud
+    spec:
+      serviceAccountName: auth-service-sa
+      containers:
+        - name: auth-service
+          image: __REGISTRY__/shopcloud/auth-service:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SHOPCLOUD_JWT_EXPIRATION_MS
+              value: "86400000"
+          envFrom:
+            - secretRef:
+                name: shopcloud-app-secrets
+            - configMapRef:
+                name: shopcloud-runtime-config
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  labels:
+    app: auth-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  type: ClusterIP
+  selector:
+    app: auth-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+  labels:
+    app: catalog-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: catalog-service
+  template:
+    metadata:
+      labels:
+        app: catalog-service
+        app.kubernetes.io/part-of: shopcloud
+    spec:
+      serviceAccountName: catalog-service-sa
+      containers:
+        - name: catalog-service
+          image: __REGISTRY__/shopcloud/catalog-service:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SERVER_PORT
+              value: "8081"
+          envFrom:
+            - secretRef:
+                name: shopcloud-app-secrets
+            - configMapRef:
+                name: shopcloud-runtime-config
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 45
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-service
+  labels:
+    app: catalog-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  type: ClusterIP
+  selector:
+    app: catalog-service
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-service
+  labels:
+    app: cart-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cart-service
+  template:
+    metadata:
+      labels:
+        app: cart-service
+        app.kubernetes.io/part-of: shopcloud
+    spec:
+      serviceAccountName: cart-service-sa
+      containers:
+        - name: cart-service
+          image: __REGISTRY__/shopcloud/cart-service:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SERVER_PORT
+              value: "8082"
+          envFrom:
+            - secretRef:
+                name: shopcloud-app-secrets
+            - configMapRef:
+                name: shopcloud-runtime-config
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 45
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart-service
+  labels:
+    app: cart-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  type: ClusterIP
+  selector:
+    app: cart-service
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-service
+  labels:
+    app: checkout-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: checkout-service
+  template:
+    metadata:
+      labels:
+        app: checkout-service
+        app.kubernetes.io/part-of: shopcloud
+    spec:
+      serviceAccountName: checkout-service-sa
+      containers:
+        - name: checkout-service
+          image: __REGISTRY__/shopcloud/checkout-service:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SERVER_PORT
+              value: "8083"
+          envFrom:
+            - secretRef:
+                name: shopcloud-app-secrets
+            - configMapRef:
+                name: shopcloud-runtime-config
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 25
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout-service
+  labels:
+    app: checkout-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  type: ClusterIP
+  selector:
+    app: checkout-service
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+  labels:
+    app: admin-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: admin-service
+  template:
+    metadata:
+      labels:
+        app: admin-service
+        app.kubernetes.io/part-of: shopcloud
+    spec:
+      serviceAccountName: admin-service-sa
+      containers:
+        - name: admin-service
+          image: __REGISTRY__/shopcloud/admin-service:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8084
+          env:
+            - name: SERVER_PORT
+              value: "8084"
+          envFrom:
+            - secretRef:
+                name: shopcloud-app-secrets
+            - configMapRef:
+                name: shopcloud-runtime-config
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 35
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-service
+  labels:
+    app: admin-service
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  type: ClusterIP
+  selector:
+    app: admin-service
+  ports:
+    - name: http
+      port: 8084
+      targetPort: 8084
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-frontend
+  labels:
+    app: customer-frontend
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: customer-frontend
+  template:
+    metadata:
+      labels:
+        app: customer-frontend
+        app.kubernetes.io/part-of: shopcloud
+    spec:
+      containers:
+        - name: customer-frontend
+          image: __REGISTRY__/shopcloud/customer-frontend:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: customer-nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: customer-frontend.conf
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      volumes:
+        - name: customer-nginx-conf
+          configMap:
+            name: shopcloud-nginx-configs
+            items:
+              - key: customer-frontend.conf
+                path: customer-frontend.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-frontend
+  labels:
+    app: customer-frontend
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  type: ClusterIP
+  selector:
+    app: customer-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-frontend
+  labels:
+    app: admin-frontend
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: admin-frontend
+  template:
+    metadata:
+      labels:
+        app: admin-frontend
+        app.kubernetes.io/part-of: shopcloud
+    spec:
+      containers:
+        - name: admin-frontend
+          image: __REGISTRY__/shopcloud/admin-frontend:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: admin-nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: admin-frontend.conf
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      volumes:
+        - name: admin-nginx-conf
+          configMap:
+            name: shopcloud-nginx-configs
+            items:
+              - key: admin-frontend.conf
+                path: admin-frontend.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-frontend
+  labels:
+    app: admin-frontend
+    app.kubernetes.io/part-of: shopcloud
+spec:
+  type: ClusterIP
+  selector:
+    app: admin-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

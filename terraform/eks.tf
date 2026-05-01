@@ -3,7 +3,7 @@ module "eks" {
   version = "19.15.1"
 
   cluster_name    = var.cluster_name
-  cluster_version = "1.29"
+  cluster_version = "1.30"
 
   vpc_id = aws_vpc.main.id
   subnet_ids = [
@@ -65,6 +65,8 @@ module "eks" {
     instance_types                        = ["t3.small"]
     attach_cluster_primary_security_group = true
     disk_size                             = 20
+
+    
   }
 
   eks_managed_node_groups = {

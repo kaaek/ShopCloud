@@ -61,17 +61,17 @@ module "eks" {
   }
 
   eks_managed_node_group_defaults = {
-    ami_type                   = "AL2023_x86_64_STANDARD"
-    instance_types             = ["t3.small"]
+    ami_type                              = "AL2023_x86_64_STANDARD"
+    instance_types                        = ["t3.small"]
     attach_cluster_primary_security_group = true
-    disk_size                  = 20
+    disk_size                             = 20
   }
 
   eks_managed_node_groups = {
     shopcloud = {
-      min_size     = 1
-      max_size     = 3
-      desired_size = 2
+      min_size      = 1
+      max_size      = 3
+      desired_size  = 2
       capacity_type = "SPOT"
 
       instance_types = ["t3.small"]
@@ -80,10 +80,10 @@ module "eks" {
         workload = "shopcloud"
       }
 
-      iam_role_additional_policies = {
-        Name        = "ShopCloud-EKS-Managed-Node-Group"
-        Environment = var.environment
-      }
+      # Add AWS managed policies if needed, e.g.:
+      # iam_role_additional_policies = {
+      #   AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      # }
     }
   }
 }

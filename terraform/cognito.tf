@@ -75,12 +75,12 @@ resource "aws_cognito_user_pool" "admins" {
 }
 
 resource "aws_cognito_user_pool_domain" "customers" {
-  domain       = "${var.cognito_domain_prefix}-customers"
+  domain       = "${var.cognito_domain_prefix}-${data.aws_caller_identity.current.account_id}-customers"
   user_pool_id = aws_cognito_user_pool.customers.id
 }
 
 resource "aws_cognito_user_pool_domain" "admins" {
-  domain       = "${var.cognito_domain_prefix}-admins"
+  domain       = "${var.cognito_domain_prefix}-${data.aws_caller_identity.current.account_id}-admins"
   user_pool_id = aws_cognito_user_pool.admins.id
 }
 

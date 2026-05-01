@@ -26,13 +26,13 @@ resource "aws_db_instance" "postgres_primary" {
 
   manage_master_user_password = true
 
-  multi_az               = true
-  publicly_accessible    = false
-  storage_encrypted      = true
-  deletion_protection    = var.enable_deletion_protection
-  backup_retention_period = 7
-  skip_final_snapshot    = true
-  
+  multi_az                = false
+  publicly_accessible     = false
+  storage_encrypted       = true
+  deletion_protection     = var.enable_deletion_protection
+  backup_retention_period = 1
+  skip_final_snapshot     = true
+
   enabled_cloudwatch_logs_exports = ["postgresql"]
 
   db_subnet_group_name   = aws_db_subnet_group.shopcloud.name
@@ -47,17 +47,17 @@ resource "aws_db_instance" "postgres_primary" {
 # ————————— Cross-Region Read Replica ————————— #
 # Creates a read replica in us-west-2 for disaster recovery and regional read optimization
 resource "aws_db_instance" "postgres_replica" {
-  count                    = var.enable_cross_region_replica ? 1 : 0
-  identifier               = "shopcloud-postgres-replica-${var.environment}"
-  
-  replicate_source_db      = aws_db_instance.postgres_primary.identifier
-  instance_class           = "db.t4g.micro"
-  
-  publicly_accessible      = false
+  count      = var.enable_cross_region_replica ? 1 : 0
+  identifier = "shopcloud-postgres-replica-${var.environment}"
+
+  replicate_source_db = aws_db_instance.postgres_primary.identifier
+  instance_class      = "db.t4g.micro"
+
+  publicly_accessible        = false
   auto_minor_version_upgrade = true
-  
-  skip_final_snapshot      = true
-  deletion_protection      = var.enable_deletion_protection
+
+  skip_final_snapshot = true
+  deletion_protection = var.enable_deletion_protection
 
   tags = {
     Name        = "shopcloud-postgres-replica"

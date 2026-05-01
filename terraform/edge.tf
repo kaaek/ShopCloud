@@ -150,7 +150,6 @@ resource "aws_cloudfront_origin_request_policy" "forward_host_and_query" {
 resource "aws_cloudfront_distribution" "frontend" {
   for_each = local.frontend_sites
 
-  name                             = "shopcloud-${each.key}-oac"
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "ShopCloud ${title(each.key)} frontend"

@@ -1,30 +1,30 @@
 # ————————— Route 53 & DNS ————————— #
 output "route53_zone_id" {
   description = "Hosted zone ID for the ShopCloud public domain"
-  value       = aws_route53_zone.shopcloud.zone_id
+  value       = var.enable_public_edge ? aws_route53_zone.shopcloud[0].zone_id : null
 }
 
 output "customer_frontend_url" {
   description = "Primary URL for the customer storefront"
-  value       = "https://${local.root_domain_name}"
+  value       = var.enable_public_edge ? "https://${local.root_domain_name}" : "http://${aws_lb.customer_public.dns_name}"
 }
 
 output "admin_frontend_url" {
   description = "URL for the admin dashboard"
-  value       = "https://${local.frontend_sites.admin.domain_name}"
+  value       = var.enable_public_edge ? "https://${local.frontend_sites.admin.domain_name}" : "http://${aws_lb.admin_internal.dns_name}"
 }
 
 # ————————— CloudFront & WAF ————————— #
 output "cloudfront_domains" {
   description = "CloudFront distribution domain names"
-  value = {
+  value = var.enable_public_edge ? {
     for site_name, distribution in aws_cloudfront_distribution.frontend : site_name => distribution.domain_name
-  }
+  } : {}
 }
 
 output "waf_web_acl_arn" {
   description = "CloudFront WAF web ACL ARN"
-  value       = aws_wafv2_web_acl.cloudfront.arn
+  value       = var.enable_public_edge ? aws_wafv2_web_acl.cloudfront[0].arn : null
 }
 
 # ————————— Load Balancers ————————— #
@@ -82,7 +82,7 @@ output "admin_cognito_hosted_ui_domain" {
 # ————————— VPN ————————— #
 output "vpn_endpoint_id" {
   description = "AWS Client VPN endpoint ID for private admin access"
-  value       = aws_ec2_client_vpn_endpoint.shopcloud.id
+  value       = var.enable_vpn ? aws_ec2_client_vpn_endpoint.shopcloud[0].id : null
 }
 
 # ————————— EKS ————————— #

@@ -47,6 +47,12 @@ variable "subnet_6_cidr" {
   default = "10.0.160.0/18"
 }
 
+variable "eks_api_allowed_cidrs" {
+  description = "CIDR blocks allowed to access the EKS cluster API"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
 variable "vpn_cidr" {
   description = "CIDR block for the VPN network allowed to reach the admin entrypoint"
   type = string

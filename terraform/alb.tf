@@ -7,8 +7,8 @@ resource "aws_lb" "admin_internal" {
   security_groups    = [aws_security_group.admin.id]
   subnets            = [aws_subnet.private_1.id, aws_subnet.private_2.id]
 
-  enable_deletion_protection = var.enable_deletion_protection
-  enable_http2              = true
+  enable_deletion_protection       = var.enable_deletion_protection
+  enable_http2                     = true
   enable_cross_zone_load_balancing = true
 
   tags = {
@@ -59,8 +59,8 @@ resource "aws_lb" "customer_public" {
   security_groups    = [aws_security_group.customer_ingress.id]
   subnets            = [aws_subnet.public_1.id, aws_subnet.public_2.id]
 
-  enable_deletion_protection = var.enable_deletion_protection
-  enable_http2              = true
+  enable_deletion_protection       = var.enable_deletion_protection
+  enable_http2                     = true
   enable_cross_zone_load_balancing = true
 
   tags = {
@@ -103,6 +103,8 @@ resource "aws_lb_listener" "customer_http" {
 }
 
 resource "aws_lb_listener" "customer_https" {
+  count = var.alb_certificate_arn != "" ? 1 : 0
+
   load_balancer_arn = aws_lb.customer_public.arn
   port              = "443"
   protocol          = "HTTPS"

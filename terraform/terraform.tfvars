@@ -13,6 +13,9 @@ subnet_6_cidr = "10.0.80.0/20"
 
 cognito_domain_prefix = "shopcloud-karim-503q-dev"
 
+enable_public_edge = false
+enable_vpn         = false
+
 cognito_customer_callback_urls = [
   "http://localhost:3000/callback"
 ]
@@ -37,8 +40,8 @@ root_domain_name = "www.shopcloud.com"
 
 customer_ingress_domain_name = "placeholder.example.com"
 
-cloudfront_certificate_arn = "arn:aws:acm:us-east-1:091470428184:certificate/2dd1452d-855f-4f6e-91f7-3b0bb50da747"
+cloudfront_certificate_arn = ""
 
-vpn_root_certificate_chain_arn = "arn:aws:acm:us-east-1:123456789012:certificate/placeholder-root"
+vpn_root_certificate_chain_arn = ""
 
-vpn_server_certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/placeholder-server"
+vpn_server_certificate_arn = ""

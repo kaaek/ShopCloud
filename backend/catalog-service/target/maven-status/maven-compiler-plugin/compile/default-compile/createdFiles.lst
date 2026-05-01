@@ -1,0 +1,13 @@
+com/shopcloud/catalog/security/InternalTokenFilter.class
+com/shopcloud/catalog/product/InternalProductController.class
+com/shopcloud/catalog/product/ProductService.class
+com/shopcloud/catalog/security/JwtAuthFilter.class
+com/shopcloud/catalog/security/JwtService.class
+com/shopcloud/catalog/CatalogServiceApplication.class
+com/shopcloud/catalog/product/ProductRequest.class
+com/shopcloud/catalog/exception/GlobalExceptionHandler.class
+com/shopcloud/catalog/product/ProductRepository.class
+com/shopcloud/catalog/product/StockChangeRequest.class
+com/shopcloud/catalog/product/Product.class
+com/shopcloud/catalog/security/SecurityConfig.class
+com/shopcloud/catalog/product/PublicProductController.class

@@ -1,0 +1,13 @@
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/AuthController.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/AuthServiceApplication.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/dto/AuthResponse.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/dto/LoginRequest.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/dto/RegisterRequest.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/dto/UserMeResponse.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/exception/GlobalExceptionHandler.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/security/JwtAuthFilter.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/security/JwtService.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/security/SecurityConfig.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/user/AppUser.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/user/Role.java
+/home/ubuntu/Desktop/ShopCloud/backend/auth-service/src/main/java/com/shopcloud/auth/user/UserRepository.java

@@ -1,0 +1,14 @@
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/AdminOrderController.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/AdminProductController.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/AdminServiceApplication.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/client/CatalogAdminClient.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/client/CheckoutAdminClient.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/config/RestTemplateConfig.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/dto/OrderDto.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/dto/OrderLineDto.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/dto/ProductDto.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/dto/ProductRequest.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/exception/GlobalExceptionHandler.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/security/JwtAuthFilter.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/security/JwtService.java
+/home/ubuntu/Desktop/ShopCloud/backend/admin-service/src/main/java/com/shopcloud/admin/security/SecurityConfig.java

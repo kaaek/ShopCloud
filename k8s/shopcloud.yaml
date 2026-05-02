@@ -143,6 +143,11 @@ metadata:
     app.kubernetes.io/part-of: shopcloud
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: auth-service
@@ -214,6 +219,11 @@ metadata:
     app.kubernetes.io/part-of: shopcloud
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: catalog-service
@@ -283,6 +293,11 @@ metadata:
     app.kubernetes.io/part-of: shopcloud
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: cart-service
@@ -352,6 +367,11 @@ metadata:
     app.kubernetes.io/part-of: shopcloud
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: checkout-service
@@ -421,6 +441,11 @@ metadata:
     app.kubernetes.io/part-of: shopcloud
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: admin-service
@@ -490,6 +515,11 @@ metadata:
     app.kubernetes.io/part-of: shopcloud
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: customer-frontend
@@ -561,6 +591,11 @@ metadata:
     app.kubernetes.io/part-of: shopcloud
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: admin-frontend

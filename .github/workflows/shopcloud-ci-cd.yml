@@ -273,6 +273,16 @@ jobs:
             kubectl -n "$K8S_NAMESPACE" rollout status deployment/$deploy --timeout=300s
           done
 
+      - name: Diagnose rollout failure
+        if: failure()
+        shell: bash
+        run: |
+          kubectl -n "$K8S_NAMESPACE" get deploy,pods -o wide
+          kubectl -n "$K8S_NAMESPACE" get events --sort-by=.lastTimestamp
+          for deploy in auth-service catalog-service cart-service checkout-service admin-service customer-frontend admin-frontend; do
+            kubectl -n "$K8S_NAMESPACE" describe deployment/$deploy || true
+          done
+
       - name: Verify pods and services
         run: |
           kubectl -n "$K8S_NAMESPACE" get pods -o wide
@@ -339,6 +349,16 @@ jobs:
         run: |
           for deploy in auth-service catalog-service cart-service checkout-service admin-service customer-frontend admin-frontend; do
             kubectl -n "$K8S_NAMESPACE" rollout status deployment/$deploy --timeout=300s
+          done
+
+      - name: Diagnose rollout failure
+        if: failure()
+        shell: bash
+        run: |
+          kubectl -n "$K8S_NAMESPACE" get deploy,pods -o wide
+          kubectl -n "$K8S_NAMESPACE" get events --sort-by=.lastTimestamp
+          for deploy in auth-service catalog-service cart-service checkout-service admin-service customer-frontend admin-frontend; do
+            kubectl -n "$K8S_NAMESPACE" describe deployment/$deploy || true
           done
 
       - name: Verify pods and services

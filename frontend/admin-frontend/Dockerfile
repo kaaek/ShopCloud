@@ -4,7 +4,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
-FROM nginx:alpine AS runner
+FROM nginx:stable-alpine AS runner
 WORKDIR /usr/share/nginx/html
 COPY --from=builder /admin-frontend/dist .
 EXPOSE 80

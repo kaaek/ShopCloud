@@ -5,7 +5,7 @@ COPY pom.xml ./
 COPY src ./src
 RUN mvn -DskipTests clean package && cp target/*.jar app.jar
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 EXPOSE 8081
 COPY --from=builder /build/app.jar app.jar
